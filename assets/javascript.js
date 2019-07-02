@@ -1,19 +1,21 @@
 //Global Variables
 var attackName = '',
     curAttack = {},
-    randInt = 0,
     enemyAttack = {},
-    defendProgressInt = null,
-    defendProgressComplete = 0,
-    progressInt = null,
-    progressComplete = 0;
+    randInt = 0
+    // defendProgressInt = null,
+    // defendProgressComplete = 0,
+    // progressInt = null,
+    // progressComplete = 0;
 
 var pokemonTypes = ["electric", "fire", "leaf", "water"] 
 var typePic = "./images/pokemontypes.png"
 
 var gameData = {
     step:1,
+    //Hero to be selected by player
     hero:{},
+    //Enemy to be selected by player
     enemy:{}
 }
 
@@ -195,7 +197,7 @@ function attackPower(min, max) {
 function populateChar(container, character) {
     //Populate Character, progress bar for Hero    
     if (character === 'hero') {
-        //Get percentage for width attribute
+        //Get percentage of initial hero HP (100%)
         var percentage = (gameData.hero.hp.current/gameData.hero.hp.total)*100
         //Display image in html
         container.append('<section class="char hero"><img src="'+gameData.hero.img.fightingWith+'" alt="'+gameData.hero.name+'"></section>');
@@ -204,8 +206,11 @@ function populateChar(container, character) {
     }
     //Same for enemy
     else if (character === 'enemy') {
+        // Get percentage of initial enemy HP (100%)
         var percentage = (gameData.enemy.hp.current/gameData.enemy.hp.total)*100
+        //Display image in html
         container.append('<section class="char enemy"><img src="'+gameData.enemy.img.fightingAgainst+'" alt="'+gameData.enemy.name+'"></section>');
+        //Display Enemy data (hp, health bar)
         $("#enemyData").append('<div class="data"><p>'+gameData.enemy.name+'</p><div class="progress"><div class="progress-bar" role="progressbar" id="enemyPercentage" style="width: '+percentage+'%" aria-valuenow="450" aria-valuemin="450" aria-valuemax="500"></div></div></div><br><p>'+gameData.enemy.hp.current+'/'+gameData.enemy.hp.total+'</p>');
     }
 }
@@ -221,7 +226,7 @@ function attackMultipler(attacker){
         defender = 'hero';
     }
     
-    //If Defender is weak against Attacker type then double
+    //If Defender is weak against Attacker type then double for both hero and enemy
     if (gameData[defender].weakness === gameData[attacker].type) {
         if (defender === "hero") {
             enemyAttack.hp *= 1.5;
@@ -231,7 +236,7 @@ function attackMultipler(attacker){
         }
     }
 
-    //If Defender is strong against Attacker type then half
+    //If Defender is strong against Attacker type then half for both hero and enemy
     if (gameData[defender].strength === gameData[attacker].type) {
         if (defender === "hero") {
             enemyAttack.hp /= 1.5;
@@ -241,7 +246,7 @@ function attackMultipler(attacker){
         }
     }
 
-    //Remove decimal and return
+    //Remove decimal and return for hero and enemy
     if (defender === "hero") {
         enemyAttack.hp = Math.floor(enemyAttack.hp);
         return enemyAttack.hp;
@@ -255,14 +260,15 @@ function attackMultipler(attacker){
 
 
 //Setup HP of hero and enemy
-function setHP() {
-    clearInterval(defendProgressInt);
-    clearInterval(progressInt);
-    $("").val();
-    $("").val();
-}
+// function setHP() {
+//     clearInterval(defendProgressInt);
+//     clearInterval(progressInt);
+//     $("").val();
+//     $("").val();
+// }
 
 function resetGame() {
+    console.log("Reset game has been initiated")
     //Clear all divs
     $(".characters").empty();
     $("#hero").empty();
@@ -280,7 +286,7 @@ function resetGame() {
     characterChoice();
 }
 resetGame();
-$(".logo").click(resetGame());
+
 
 function characterChoice() {
     $(".container .characters .character").on("click", function() {
@@ -312,7 +318,7 @@ function characterChoice() {
                 $("#moves").addClass("disabled")
 
                 //Instruct to choose enemy
-                $("#instructions").text("Choose your Enemy.")
+                $("#instructions h2").text("Choose your Enemy.");
                 
                 //Set Step to 2
                 gameData.step = 2;
@@ -339,36 +345,40 @@ function characterChoice() {
                 $('.characters').children().slideUp('500', function(){
                     $('.characters').addClass('hidden');
                   });
-
+                // Set gamestep to 3 to indicate that enemy was chosen
                 gameData.step = 3;
+                //Start the FIGHT
                 attackList();
                 break;
 
-                
         }
     })
 }
 
 // Hero Attack
-
 function attackEnemy(that) {
     //What attack was selected
+    //From "that" object, follow object path to value for attackName as shown below
     attackName = that.context.firstChild.innerHTML
     
-    //children(".moveBox").children(".moveName").text();
-    
+    //Find attack name that was selected
     for (let i in gameData.hero.attacks) {
+        // If attack name selected = attack name from heros attacks AND there is pp available
         if (gameData.hero.attacks[i].name === attackName && gameData.hero.attacks[i].pp.available > 0) {
-            //Get chosen attack
+            //Get chosen attack and assign to curAttack
             curAttack = gameData.hero.attacks[i];
+            //Reduce the pp by 1
             curAttack.pp.available -= 1;
+            //lol the struggle to make this work was real PS: Jquery cannot handle a selector with a space 
             let name = "#" + curAttack.name
             console.log(name, curAttack.pp.available)
+            //Use name variable as selector to change pp available
             $(name).text(curAttack.pp.available);             
         }
     }
 
     console.log(curAttack)
+    //Annimation of attack
     if (curAttack.pp.available > 0) {
         $('#moves').addClass("disabled");
 
@@ -397,9 +407,9 @@ function attackEnemy(that) {
         'swing'
         );
     }
-    //Attack Enemy
+    //Reduce Enemy HP by hit
     gameData.enemy.hp.current -= attackMultipler('hero', curAttack);
-    //Update HP
+    //Update HP Bar of Enemy  to reflect new percentage
     $("#enemyPercentage").attr("style", 'width: '+((gameData.enemy.hp.current/500)*100)+'%');
     console.log(gameData.enemy.hp.current)
 
@@ -440,15 +450,18 @@ function attackEnemy(that) {
 
 //Enemy Attack 
 function defend(that) {
-    // random attack
+    // Generate random int for index of attacks (0-2)
     var randInt = Math.floor(Math.random()*3);
+    // To adjust the difficult of this game, I am making it harder for the enemy to use their best attack which is an index of 2. If the first randInt is a 2 then reassign it again
     if (randInt === 2) {
         randInt = Math.floor(Math.random()*3);
     }
+    //assign enemy attack to index of enemy attacks with randInt
     enemyAttack = gameData.enemy.attacks[randInt];
 
     console.log(randInt, enemyAttack)
-    // enemy attack animation sequence
+
+    // Enemy attack animation sequence
     $('.char img').animate(
       {
         'margin-right': '-30px',
@@ -473,10 +486,13 @@ function defend(that) {
       50,
       'swing'
     );
-    gameData.enemy.hp.current -= attackMultipler('enemy', enemyAttack);
+    //Subtract HP of hero from enemy attack
+    gameData.hero.hp.current -= attackMultipler('enemy', enemyAttack);
+
     //Update HP
     $("#heroPercentage").attr("style", 'width: '+((gameData.hero.hp.current/500)*100)+'%');
-
+    
+    //If hero is dead 
     if (gameData.hero.hp.current <= 0) {
 
         //Ya boy is dead
@@ -486,8 +502,10 @@ function defend(that) {
         $('.modal-out').slideDown('400');
         modalControls()
 
+        //Set hp to 0 if it was in the negatives
         gameData.hero.hp.current = 0;
         
+        //Play again
         resetGame();
     }
     else {
@@ -497,26 +515,7 @@ function defend(that) {
     }
 }
 
-
-
-// $(".container .characters .character").on("click", function() {
-//     //get index of character clicked
-//     console.log("Clicked")
-//     var nameIndex = $(this).attr("id")
-//     console.log(nameIndex)
-// })
-
-// $("#0").click(function() {
-//     console.log("Click")
-// })
-
-// gameData.hero = characters[0]
-// gameData.enemy = characters[3]
-// console.log(gameData.hero.img.fightingAgainst)
-
-// populateChar($("#hero"), 'hero')
-// populateChar($("#enemy"), 'enemy')
-
+//Modal controls
 function modalControls(){
     $('.modal-out').click(function(){
       $(this).slideUp('400');
@@ -530,7 +529,8 @@ function modalControls(){
       e.preventDefault();
     });
 }
-  
+
+//Clear Modal
 function clearModal(){
     $('.modal-in header').empty();
     $('.modal-in section').empty();
@@ -538,18 +538,25 @@ function clearModal(){
     //setHP();
 }
 
+//Let the scrap begin, function to initiate fight
 function attackList() {
     $("#moves").removeClass("disabled");
 
+    //Get move object
     $(".moveBox").click(function() {
         var doAttack = 1;
-
+        
+        //Ensure gamestep 3 is current step
         if (gameData.step === 3) {
             console.log($(this));
+            //Pass attack object to function
             attackEnemy($(this));
         }
     });
 }
 
-
+//Refresh page 
+$('#logo').click(function() {
+    location.reload();
+});
 
