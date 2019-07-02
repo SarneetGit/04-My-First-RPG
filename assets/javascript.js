@@ -3,10 +3,6 @@ var attackName = '',
     curAttack = {},
     enemyAttack = {},
     randInt = 0
-    // defendProgressInt = null,
-    // defendProgressComplete = 0,
-    // progressInt = null,
-    // progressComplete = 0;
 
 var pokemonTypes = ["electric", "fire", "leaf", "water"] 
 var typePic = "./images/pokemontypes.png"
@@ -259,14 +255,6 @@ function attackMultipler(attacker){
 }
 
 
-//Setup HP of hero and enemy
-// function setHP() {
-//     clearInterval(defendProgressInt);
-//     clearInterval(progressInt);
-//     $("").val();
-//     $("").val();
-// }
-
 function resetGame() {
     console.log("Reset game has been initiated")
     //Clear all divs
@@ -275,6 +263,8 @@ function resetGame() {
     $("#heroData").empty();
     $("#enemy").empty();
     $("#enemyData").empty();
+    $(".moveBox").unbind("click");
+    $("#moves").empty();
 
     // Reset
     $("#instructions h2").text("Choose your Pokemon.");
@@ -339,7 +329,8 @@ function characterChoice() {
                 //Build the enemy
                 populateChar($("#enemy"), "enemy");
 
-                $("#instructions").text("FIGHT!");
+
+                $("#instructions h2").text("FIGHT!");
 
                 //Hide the heros list
                 $('.characters').children().slideUp('500', function(){
@@ -450,12 +441,13 @@ function attackEnemy(that) {
 
 //Enemy Attack 
 function defend(that) {
+    enemyAttack = 0
     // Generate random int for index of attacks (0-2)
-    var randInt = Math.floor(Math.random()*3);
+    randInt = Math.floor(Math.random()*3);
     // To adjust the difficult of this game, I am making it harder for the enemy to use their best attack which is an index of 2. If the first randInt is a 2 then reassign it again
-    if (randInt === 2) {
-        randInt = Math.floor(Math.random()*3);
-    }
+    // if (randInt === 2) {
+    //     randInt = Math.floor(Math.random()*3);
+    // }
     //assign enemy attack to index of enemy attacks with randInt
     enemyAttack = gameData.enemy.attacks[randInt];
 
@@ -509,9 +501,7 @@ function defend(that) {
         resetGame();
     }
     else {
-        //I lived mofo
-
-
+        //I lived mofo 
     }
 }
 
