@@ -154,8 +154,8 @@ var characters = [
             name: "Scratch",
             hp: attackPower(45, 70),
             pp: {
-                available: 15,
-                total: 15
+                available: 2,
+                total: 2
             }
         },
         {
@@ -356,10 +356,12 @@ function attackEnemy(that) {
     for (let i in gameData.hero.attacks) {
         // If attack name selected = attack name from heros attacks AND there is pp available
         if (gameData.hero.attacks[i].name === attackName && gameData.hero.attacks[i].pp.available > 0) {
+            console.log("pp reamining is: ", gameData.hero.attacks[i].pp.available)
             //Get chosen attack and assign to curAttack
             curAttack = gameData.hero.attacks[i];
             //Reduce the pp by 1
             curAttack.pp.available -= 1;
+            gameData.hero.attacks[i].pp.availabl -=1;
             //lol the struggle to make this work was real PS: Jquery cannot handle a selector with a space 
             let name = "#" + curAttack.name
             console.log(name, curAttack.pp.available)
@@ -498,7 +500,10 @@ function defend(that) {
         gameData.hero.hp.current = 0;
         
         //Play again
-        resetGame();
+        setTimeout(function(){
+        //     // now defend that attack
+            location.reload();            
+        }, 5000);
     }
     else {
         //I lived mofo 
@@ -534,14 +539,20 @@ function attackList() {
 
     //Get move object
     $(".moveBox").click(function() {
-        var doAttack = 1;
-        
-        //Ensure gamestep 3 is current step
-        if (gameData.step === 3) {
-            console.log($(this));
-            //Pass attack object to function
-            attackEnemy($(this));
+        if ($(this).context.lastElementChild.firstChild.innerText == 0) {
+            alert("If you see that there is no power points, why click it again?")
+            attackList()
         }
+
+        else {
+            //Ensure gamestep 3 is current step
+            if (gameData.step === 3) {
+                console.log($(this));
+                //Pass attack object to function
+                attackEnemy($(this));
+            }
+        }
+        
     });
 }
 
@@ -549,4 +560,3 @@ function attackList() {
 $('#logo').click(function() {
     location.reload();
 });
-
