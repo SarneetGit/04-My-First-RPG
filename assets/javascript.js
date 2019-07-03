@@ -540,7 +540,7 @@ function attackList() {
     //Get move object
     $(".moveBox").click(function() {
         if ($(this).context.lastElementChild.firstChild.innerText == 0) {
-            alert("If you see that there is no power points, why click it again?")
+            //alert("If you see that there is no power points, why click it again?")
             attackList()
         }
 
