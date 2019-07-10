@@ -16,7 +16,7 @@ I wanted to make the game challenging but at the same time winnable, if you have
 Be sure to take into account the PP (power points) of each attack!
 
 Instructions of the original assignment are available below:
-'''
+```
 
 # 04---My-First-RPG
 
