@@ -6,7 +6,7 @@ I have always enjoyed playing pokemon growing up so I thought it would be super 
 
 ## Game Mechanics
 
-```python
+```
 I wanted to make the game challenging but at the same time winnable, if you have ever played a pokemon game and can rationalize which attackcs should be used on which pokemon then you should win the match. Please see notable in game power ups:
 
 1) If your pokemon's attribute/type is strong against the opponent's, your attacks increase permenantly
@@ -15,10 +15,8 @@ I wanted to make the game challenging but at the same time winnable, if you have
 
 Be sure to take into account the PP (power points) of each attack!
 
-```python
 Instructions of the original assignment are available below:
-
-```
+'''
 
 # 04---My-First-RPG
 
