@@ -1,3 +1,35 @@
+# My First RPG - POKEMON BATTLE!
+
+I created this game as a submission for my week 4 assignment of the coding bootcamp I am currently enrolled in. Given the current week being a long weekend, I decided to really have one with this assignment and challenge myself at the same time.
+
+I have always enjoyed playing pokemon growing up so I thought it would be super cool to indulge in how one goes about coding a simple battle between pokemon.
+
+## Game Mechanics
+
+```javascript
+I wanted to make the game challenging but at the same time winnable, if you have ever played a pokemon game and can rationalize which attackcs should be used on which pokemon then you should win the match. Please see notable in game power ups:
+
+1) If your pokemon's attribute/type is strong against the opponent's, your attacks increase permenantly
+2) If your pokemon's attribute/type is weak against the opponent's, your attacks decrease permenantly
+3) Pikachu is a Vanilla for equality purposes in this game
+
+Be sure to take into account the PP (power points) of each attack!
+
+```
+
+## Usage
+
+```python
+import foobar
+
+foobar.pluralize('word') # returns 'words'
+foobar.pluralize('goose') # returns 'geese'
+foobar.singularize('phenomena') # returns 'phenomenon'
+```
+
+### Instructions of the original assignment are available below:
+
+
 # 04---My-First-RPG
 
 ![Star Wars](Images/2-StarWars.jpg)
