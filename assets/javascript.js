@@ -259,8 +259,8 @@ function attackMultipler(attacker){
 
 
 function resetGame() {
-    $("#enemyData").hide();
-    $("#heroData").hide();
+    // $("#enemyData").hide();
+    // $("#heroData").hide();
     console.log("Reset game has been initiated")
     //Clear all divs
     $(".characters").empty();
@@ -413,7 +413,7 @@ function attackEnemy(that) {
         gameData.enemy.hp.current -= attackMultipler('hero', curAttack);
         //Update HP Bar of Enemy  to reflect new percentage
         $("#enemyPercentage").attr("style", 'width: '+((gameData.enemy.hp.current/500)*100)+'%');
-        $("#hpUpdate").text(gameData.hero.hp.current+"/"+gameData.hero.hp.total);
+        //$("#hpUpdate").text(gameData.hero.hp.current+"/"+gameData.hero.hp.total);
         //console.log(gameData.enemy.hp.current)
     
         if (gameData.enemy.hp.current <= 0){
@@ -502,6 +502,7 @@ function defend(that) {
         );
         //Subtract HP of hero from enemy attack
         gameData.hero.hp.current -= attackMultipler('enemy', enemyAttack);
+        $("#hpUpdate").text(gameData.hero.hp.current+"/"+gameData.hero.hp.total);
     
         //Update HP
         $("#heroPercentage").attr("style", 'width: '+((gameData.hero.hp.current/500)*100)+'%');
