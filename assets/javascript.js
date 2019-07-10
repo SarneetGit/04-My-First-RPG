@@ -418,8 +418,8 @@ function attackEnemy(that) {
             heroAttacked = false;
             //Enemy Died
             clearModal();
-            $('.modal-in header').append('<h1>You Enemy is slain</h1><span class="close">x</span>');
-            $('.modal-in section').append('<p>Congratulations! Dare you try again?');
+            $('.modal-in header').append('<h1>Your Enemy has fainted</h1><span class="close">x</span>');
+            $('.modal-in section').append('<p>Congratulations! But only those who defeat all 3 opponents become a true Pokemon Master...');
             $('.modal-out').slideDown('400');
             modalControls();
     
@@ -508,8 +508,8 @@ function defend(that) {
     
             //Ya boy is dead
             clearModal();
-            $('.modal-in header').append('<h1>Your Hero has died</h1><span class="close">x</span>');
-            $('.modal-in section').append('<p>You lose, good day!');
+            $('.modal-in header').append('<h1>Your Pokemon has fainted...</h1><span class="close">x</span>');
+            $('.modal-in section').append('<p>You have run out of usuable pokemon... You whited out!');
             $('.modal-out').slideDown('400');
             modalControls()
     
