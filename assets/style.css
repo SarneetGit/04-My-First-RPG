@@ -117,6 +117,10 @@ data p {
     height: 70px;
 }
 
+.moveBox:hover {
+    cursor: pointer;
+}
+
 .moveName {
     text-align: center;
     font-size: 30px;
