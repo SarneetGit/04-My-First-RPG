@@ -201,7 +201,7 @@ function populateChar(container, character) {
         //Display image in html
         container.append('<section class="char hero"><img src="'+gameData.hero.img.fightingWith+'" alt="'+gameData.hero.name+'"></section>');
         //Display data and hp bar
-        $("#heroData").append('<div class="data"><p>'+gameData.hero.name+'</p><div class="progress"><div class="progress-bar" role="progressbar" id="heroPercentage" style="width: '+percentage+'%" aria-valuenow="450" aria-valuemin="450" aria-valuemax="500"></div></div></div><br><p>'+gameData.hero.hp.current+'/'+gameData.hero.hp.total+'</p>');        
+        $("#heroData").append('<div class="data"><p>'+gameData.hero.name+'</p><div class="progress"><div class="progress-bar" role="progressbar" id="heroPercentage" style="width: '+percentage+'%" aria-valuenow="450" aria-valuemin="450" aria-valuemax="500"></div></div></div><br><p id="hpUpdate">'+gameData.hero.hp.current+'/'+gameData.hero.hp.total+'</p>');        
     }
     //Same for enemy
     else if (character === 'enemy') {
@@ -210,7 +210,7 @@ function populateChar(container, character) {
         //Display image in html
         container.append('<section class="char enemy"><img src="'+gameData.enemy.img.fightingAgainst+'" alt="'+gameData.enemy.name+'"></section>');
         //Display Enemy data (hp, health bar)
-        $("#enemyData").append('<div class="data"><p>'+gameData.enemy.name+'</p><div class="progress"><div class="progress-bar" role="progressbar" id="enemyPercentage" style="width: '+percentage+'%" aria-valuenow="450" aria-valuemin="450" aria-valuemax="500"></div></div></div><br><p>'+gameData.enemy.hp.current+'/'+gameData.enemy.hp.total+'</p>');
+        $("#enemyData").append('<div class="data"><p>'+gameData.enemy.name+'</p><div class="progress"><div class="progress-bar" role="progressbar" id="enemyPercentage" style="width: '+percentage+'%" aria-valuenow="450" aria-valuemin="450" aria-valuemax="500"></div></div></div><br>');
     }
 }
 
@@ -259,6 +259,8 @@ function attackMultipler(attacker){
 
 
 function resetGame() {
+    $("#enemyData").hide();
+    $("#heroData").hide();
     console.log("Reset game has been initiated")
     //Clear all divs
     $(".characters").empty();
@@ -411,6 +413,7 @@ function attackEnemy(that) {
         gameData.enemy.hp.current -= attackMultipler('hero', curAttack);
         //Update HP Bar of Enemy  to reflect new percentage
         $("#enemyPercentage").attr("style", 'width: '+((gameData.enemy.hp.current/500)*100)+'%');
+        $("#hpUpdate").text(gameData.hero.hp.current+"/"+gameData.hero.hp.total);
         //console.log(gameData.enemy.hp.current)
     
         if (gameData.enemy.hp.current <= 0){
@@ -418,8 +421,8 @@ function attackEnemy(that) {
             heroAttacked = false;
             //Enemy Died
             clearModal();
-            $('.modal-in header').append('<h1>Your Enemy has fainted</h1><span class="close">x</span>');
-            $('.modal-in section').append('<p>Congratulations! But only those who defeat all 3 opponents become a true Pokemon Master...');
+            $('.modal-in header').append('<h1>You Enemy is slain</h1><span class="close">x</span>');
+            $('.modal-in section').append('<p>Congratulations! Dare you try again?');
             $('.modal-out').slideDown('400');
             modalControls();
     
@@ -508,8 +511,8 @@ function defend(that) {
     
             //Ya boy is dead
             clearModal();
-            $('.modal-in header').append('<h1>Your Pokemon has fainted...</h1><span class="close">x</span>');
-            $('.modal-in section').append('<p>You have run out of usuable pokemon... You whited out!');
+            $('.modal-in header').append('<h1>Your Hero has died</h1><span class="close">x</span>');
+            $('.modal-in section').append('<p>You lose, good day!');
             $('.modal-out').slideDown('400');
             modalControls()
     
