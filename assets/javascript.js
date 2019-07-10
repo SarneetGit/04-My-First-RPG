@@ -2,7 +2,10 @@
 var attackName = '',
     curAttack = {},
     enemyAttack = {},
-    randInt = 0
+    randInt = 0,
+    heroAttacked = false,
+    enemyAttacked = false
+    
 
 var pokemonTypes = ["electric", "fire", "leaf", "water"] 
 var typePic = "./images/pokemontypes.png"
@@ -228,14 +231,14 @@ function attackMultipler(attacker){
             enemyAttack.hp *= 1.5;
         }
         else {
-            curAttack.hp *= 1.5;
+            curAttack.hp *= 2;
         }
     }
 
     //If Defender is strong against Attacker type then half for both hero and enemy
     if (gameData[defender].strength === gameData[attacker].type) {
         if (defender === "hero") {
-            enemyAttack.hp /= 1.5;
+            enemyAttack.hp /= 2;
         }
         else {
             curAttack.hp /= 1.5;
@@ -325,7 +328,7 @@ function characterChoice() {
                 //Remove this character as a choice
                 var char = $(this).remove();
 
-                console.log(gameData.enemy.name)
+                console.log("Current Enemy is: "+gameData.enemy.name)
                 //Build the enemy
                 populateChar($("#enemy"), "enemy");
 
@@ -348,165 +351,181 @@ function characterChoice() {
 
 // Hero Attack
 function attackEnemy(that) {
-    //What attack was selected
-    //From "that" object, follow object path to value for attackName as shown below
-    attackName = that.context.firstChild.innerHTML
-    
-    //Find attack name that was selected
-    for (let i in gameData.hero.attacks) {
-        // If attack name selected = attack name from heros attacks AND there is pp available
-        if (gameData.hero.attacks[i].name === attackName && gameData.hero.attacks[i].pp.available > 0) {
-            console.log("pp reamining is: ", gameData.hero.attacks[i].pp.available)
-            //Get chosen attack and assign to curAttack
-            curAttack = gameData.hero.attacks[i];
-            //Reduce the pp by 1
-            curAttack.pp.available -= 1;
-            gameData.hero.attacks[i].pp.availabl -=1;
-            //lol the struggle to make this work was real PS: Jquery cannot handle a selector with a space 
-            let name = "#" + curAttack.name
-            console.log(name, curAttack.pp.available)
-            //Use name variable as selector to change pp available
-            $(name).text(curAttack.pp.available);             
+    if (!heroAttacked) {
+        //Set hero attacked = true and reset enemy Attacked
+        heroAttacked = true;
+        enemyAttacked = false;
+        //What attack was selected
+        //From "that" object, follow object path to value for attackName as shown below
+        attackName = that.context.firstChild.innerHTML
+        
+        //Find attack name that was selected
+        for (let i in gameData.hero.attacks) {
+            // If attack name selected = attack name from heros attacks AND there is pp available
+            if (gameData.hero.attacks[i].name === attackName && gameData.hero.attacks[i].pp.available > 0) {
+                //console.log("pp reamining is: ", gameData.hero.attacks[i].pp.available)
+                //Get chosen attack and assign to curAttack
+                curAttack = gameData.hero.attacks[i];
+                //Reduce the pp by 1
+                curAttack.pp.available -= 1;
+                gameData.hero.attacks[i].pp.availabl -=1;
+                //lol the struggle to make this work was real PS: Jquery cannot handle a selector with a space 
+                let name = "#" + curAttack.name
+                //console.log(name, curAttack.pp.available)
+                //Use name variable as selector to change pp available
+                $(name).text(curAttack.pp.available);             
+            }
         }
-    }
-
-    console.log(curAttack)
-    //Annimation of attack
-    if (curAttack.pp.available > 0) {
-        $('#moves').addClass("disabled");
-
-        $('.char img').animate(
-        {
-            'margin-left': '-30px',
-            'margin-top': '10px'
-        },
-        50,
-        'swing'
-        );
-        $('.char img').animate(
-        {
-            'margin-left': '30px',
-            'margin-top': '-10px'
-        },
-        50,
-        'swing'
-        );
-        $('.char img').animate(
-        {
-            'margin-left': '0px',
-            'margin-top': '0px'
-        },
-        50,
-        'swing'
-        );
-    }
-    //Reduce Enemy HP by hit
-    gameData.enemy.hp.current -= attackMultipler('hero', curAttack);
-    //Update HP Bar of Enemy  to reflect new percentage
-    $("#enemyPercentage").attr("style", 'width: '+((gameData.enemy.hp.current/500)*100)+'%');
-    console.log(gameData.enemy.hp.current)
-
-    if (gameData.enemy.hp.current <= 0){
-        //Enemy Died
-        clearModal();
-        $('.modal-in header').append('<h1>You Enemy is slain</h1><span class="close">x</span>');
-        $('.modal-in section').append('<p>Congratulations! Dare you try again?');
-        $('.modal-out').slideDown('400');
-        modalControls();
-
-        gameData.enemy.hp.current = 0;
-
-        // clear the stadium of the dead
-        $('#enemy').empty();
-        $('#enemyData').empty();
-
-        // show the available characters
-        $('.characters').removeClass('hidden');
-        $('.characters').children().slideDown('500');
-
-        //Empty enemy object in gameData
-        gameData.enemy = {};
-
-        //Set step to 2 to choose enemy
-        gameData.step = 2;
-
-         // unbind click for reset
-         $('.moveName').unbind('click');
-    }
-    else {
-        setTimeout(function(){
-            // now defend that attack
-            defend(that);
-        }, 1000);
+    
+        console.log("Enemies current attack: "+curAttack)
+        //Annimation of attack
+        if (curAttack.pp.available > 0) {
+            $('#moves').addClass("disabled");
+    
+            $('.char img').animate(
+            {
+                'margin-left': '-30px',
+                'margin-top': '10px'
+            },
+            50,
+            'swing'
+            );
+            $('.char img').animate(
+            {
+                'margin-left': '30px',
+                'margin-top': '-10px'
+            },
+            50,
+            'swing'
+            );
+            $('.char img').animate(
+            {
+                'margin-left': '0px',
+                'margin-top': '0px'
+            },
+            50,
+            'swing'
+            );
+        }
+        //Reduce Enemy HP by hit
+        gameData.enemy.hp.current -= attackMultipler('hero', curAttack);
+        //Update HP Bar of Enemy  to reflect new percentage
+        $("#enemyPercentage").attr("style", 'width: '+((gameData.enemy.hp.current/500)*100)+'%');
+        //console.log(gameData.enemy.hp.current)
+    
+        if (gameData.enemy.hp.current <= 0){
+            //Reset hero attacked as we KOed the enemy
+            heroAttacked = false;
+            //Enemy Died
+            clearModal();
+            $('.modal-in header').append('<h1>You Enemy is slain</h1><span class="close">x</span>');
+            $('.modal-in section').append('<p>Congratulations! Dare you try again?');
+            $('.modal-out').slideDown('400');
+            modalControls();
+    
+            gameData.enemy.hp.current = 0;
+    
+            // clear the stadium of the dead
+            $('#enemy').empty();
+            $('#enemyData').empty();
+    
+            // show the available characters
+            $('.characters').removeClass('hidden');
+            $('.characters').children().slideDown('500');
+    
+            //Empty enemy object in gameData
+            gameData.enemy = {};
+    
+            //Set step to 2 to choose enemy
+            gameData.step = 2;
+    
+             // unbind click for reset
+             $('.moveName').unbind('click');
+        }
+        else {
+            setTimeout(function(){
+                console.log("Opponent Attack Initiated")
+                // now defend that attack
+                defend(that);
+            }, 1000);
+        }
     }
 }
 
 //Enemy Attack 
 function defend(that) {
-    enemyAttack = 0
-    // Generate random int for index of attacks (0-2)
-    randInt = Math.floor(Math.random()*3);
-    // To adjust the difficult of this game, I am making it harder for the enemy to use their best attack which is an index of 2. If the first randInt is a 2 then reassign it again
-    // if (randInt === 2) {
-    //     randInt = Math.floor(Math.random()*3);
-    // }
-    //assign enemy attack to index of enemy attacks with randInt
-    enemyAttack = gameData.enemy.attacks[randInt];
-
-    console.log(randInt, enemyAttack)
-
-    // Enemy attack animation sequence
-    $('.char img').animate(
-      {
-        'margin-right': '-30px',
-        'margin-top': '-10px'
-      },
-      50,
-      'swing'
-    );
-    $('.char img').animate(
-      {
-        'margin-right': '30px',
-        'margin-top': '10px'
-      },
-      50,
-      'swing'
-    );
-    $('.char img').animate(
-      {
-        'margin-right': '0px',
-        'margin-top': '0px'
-      },
-      50,
-      'swing'
-    );
-    //Subtract HP of hero from enemy attack
-    gameData.hero.hp.current -= attackMultipler('enemy', enemyAttack);
-
-    //Update HP
-    $("#heroPercentage").attr("style", 'width: '+((gameData.hero.hp.current/500)*100)+'%');
+    if (!enemyAttacked) {
+        //Set the enemy Attacked = true and reset hero attacked
+        enemyAttacked = true;
+        heroAttacked = false;
+        enemyAttack = 0
+        // Generate random int for index of attacks (0-2)
+        randInt = Math.floor(Math.random()*3);
+        // To adjust the difficult of this game, I am making it harder for the enemy to use their best attack which is an index of 2. If the first randInt is a 2 then reassign it again
+        if (randInt === 2) {
+            randInt = Math.floor(Math.random()*3);
+        }
+        //assign enemy attack to index of enemy attacks with randInt
+        console.log("Rand Int is: "+randInt)
+        console.log("Check if enemy attacks is correct: "+gameData.enemy.attacks)
+        enemyAttack = gameData.enemy.attacks[randInt];
     
-    //If hero is dead 
-    if (gameData.hero.hp.current <= 0) {
-
-        //Ya boy is dead
-        clearModal();
-        $('.modal-in header').append('<h1>Your Hero has died</h1><span class="close">x</span>');
-        $('.modal-in section').append('<p>You lose, good day!');
-        $('.modal-out').slideDown('400');
-        modalControls()
-
-        //Set hp to 0 if it was in the negatives
-        gameData.hero.hp.current = 0;
+        console.log("Attack that was chosen: ", randInt, enemyAttack)
+    
+        // Enemy attack animation sequence
+        $('.char img').animate(
+          {
+            'margin-right': '-30px',
+            'margin-top': '-10px'
+          },
+          50,
+          'swing'
+        );
+        $('.char img').animate(
+          {
+            'margin-right': '30px',
+            'margin-top': '10px'
+          },
+          50,
+          'swing'
+        );
+        $('.char img').animate(
+          {
+            'margin-right': '0px',
+            'margin-top': '0px'
+          },
+          50,
+          'swing'
+        );
+        //Subtract HP of hero from enemy attack
+        gameData.hero.hp.current -= attackMultipler('enemy', enemyAttack);
+    
+        //Update HP
+        $("#heroPercentage").attr("style", 'width: '+((gameData.hero.hp.current/500)*100)+'%');
         
-        //Play again
-        setTimeout(function(){
-        //     // now defend that attack
-            location.reload();            
-        }, 5000);
-    }
-    else {
-        //I lived mofo 
+        //If hero is dead 
+        if (gameData.hero.hp.current <= 0) {
+    
+            //Ya boy is dead
+            clearModal();
+            $('.modal-in header').append('<h1>Your Hero has died</h1><span class="close">x</span>');
+            $('.modal-in section').append('<p>You lose, good day!');
+            $('.modal-out').slideDown('400');
+            modalControls()
+    
+            //Set hp to 0 if it was in the negatives
+            gameData.hero.hp.current = 0;
+            
+            //Play again
+            setTimeout(function(){
+            //     // now defend that attack
+                location.reload();            
+            }, 5000);
+        }
+        else {
+            //I lived mofo 
+        }
+
     }
 }
 
@@ -547,7 +566,7 @@ function attackList() {
         else {
             //Ensure gamestep 3 is current step
             if (gameData.step === 3) {
-                console.log($(this));
+                //console.log($(this));
                 //Pass attack object to function
                 attackEnemy($(this));
             }
