@@ -509,7 +509,9 @@ function defend(that) {
         
         //If hero is dead 
         if (gameData.hero.hp.current <= 0) {
-    
+            //Set hero HP to 0 if he is dead
+            gameData.hero.hp.current = 0
+            $("#hpUpdate").text(gameData.hero.hp.current+"/"+gameData.hero.hp.total);
             //Ya boy is dead
             clearModal();
             $('.modal-in header').append('<h1>Your Hero has died</h1><span class="close">x</span>');
