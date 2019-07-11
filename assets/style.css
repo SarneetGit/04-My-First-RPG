@@ -16,7 +16,6 @@ header img {
     padding:15px 0px;
 }
 
-
 .type {
     display: inline-block;
     height: 30px;
@@ -115,10 +114,14 @@ data p {
     border: 1px solid black;
     border-style: solid;
     height: 70px;
+    margin-right: 5px;
+    margin-left: 5px;
+    background-color: #CCC;
 }
 
 .moveBox:hover {
     cursor: pointer;
+    background-color: crimson;
 }
 
 .moveName {
