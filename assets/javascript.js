@@ -307,7 +307,7 @@ function characterChoice() {
                 populateChar($("#hero"), "hero");
 
                 for (let i in gameData.hero.attacks) {
-                    $("#moves").append('<div class="col-lg-3 moveBox"><h2 class="moveName">'+gameData.hero.attacks[i].name+'</h2><p><span  id="'+gameData.hero.attacks[i].name+'">'+gameData.hero.attacks[i].pp.available+'</span><span>/'+gameData.hero.attacks[i].pp.total+'</span></p></div>')
+                    $("#moves").append('<div class="col-lg-3 moveBox rounded"><h2 class="moveName">'+gameData.hero.attacks[i].name+'</h2><p><span  id="'+gameData.hero.attacks[i].name+'">'+gameData.hero.attacks[i].pp.available+'</span><span>/'+gameData.hero.attacks[i].pp.total+'</span></p></div>')
                 }
                 //Do not allow user to click on moves until enemy is chose
                 $("#moves").addClass("disabled")
