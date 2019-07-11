@@ -4,7 +4,8 @@ var attackName = '',
     enemyAttack = {},
     randInt = 0,
     heroAttacked = false,
-    enemyAttacked = false
+    enemyAttacked = false,
+    enemiesFainted = 0
     
 
 var pokemonTypes = ["electric", "fire", "leaf", "water"] 
@@ -46,7 +47,7 @@ var characters = [
         },
         {
             name: "ThunderBolt",
-            hp: attackPower(80, 120),
+            hp: attackPower(80, 180),
             pp: {
                 available: 8,
                 total: 8
@@ -54,7 +55,7 @@ var characters = [
         },
         {
             name: "VoltTackle",
-            hp: attackPower(130, 180),
+            hp: attackPower(130, 400),
             pp: {
                 available: 3,
                 total: 3
@@ -124,7 +125,7 @@ var characters = [
         },
         {
             name: "AquaTail",
-            hp: attackPower(80, 120),            
+            hp: attackPower(80, 110),            
             pp: {
                 available: 8,
                 total: 8
@@ -132,7 +133,7 @@ var characters = [
         },
         {
             name: "HydroCannon",
-            hp: attackPower(130, 195),
+            hp: attackPower(130, 185),
             pp: {
                 available: 2,
                 total: 2
@@ -163,7 +164,7 @@ var characters = [
         },
         {
             name: "Flamethrower",
-            hp: attackPower(90, 135),
+            hp: attackPower(90, 125),
             pp: {
                 available: 5,
                 total: 5
@@ -171,7 +172,7 @@ var characters = [
         },
         {
             name: "Overheat",
-            hp: attackPower(140, 190),
+            hp: attackPower(140, 180),
             pp: {
                 available: 3,
                 total: 3
@@ -228,7 +229,7 @@ function attackMultipler(attacker){
     //If Defender is weak against Attacker type then double for both hero and enemy
     if (gameData[defender].weakness === gameData[attacker].type) {
         if (defender === "hero") {
-            enemyAttack.hp *= 1.5;
+            enemyAttack.hp *= 1.4;
         }
         else {
             curAttack.hp *= 2;
@@ -241,7 +242,7 @@ function attackMultipler(attacker){
             enemyAttack.hp /= 2;
         }
         else {
-            curAttack.hp /= 1.5;
+            curAttack.hp /= 1.4;
         }
     }
 
@@ -321,6 +322,8 @@ function characterChoice() {
 
             case 2:
                 //Choose your enemy
+                //Instruct to choose enemy
+                $("#instructions h2").text("Choose your Enemy.");
                 for (let i in characters) {
                     if (characters[i].name === characters[nameIndex].name) {
                         //Find chosen enemy and add them to game data
@@ -417,14 +420,12 @@ function attackEnemy(that) {
         //console.log(gameData.enemy.hp.current)
     
         if (gameData.enemy.hp.current <= 0){
+            enemiesFainted ++
+            $("#instructions h2").text("Choose your Enemy.");
             //Reset hero attacked as we KOed the enemy
             heroAttacked = false;
             //Enemy Died
-            clearModal();
-            $('.modal-in header').append('<h1>You Enemy is slain</h1><span class="close">x</span>');
-            $('.modal-in section').append('<p>Congratulations! Dare you try again?');
-            $('.modal-out').slideDown('400');
-            modalControls();
+            showModal("enemy");
     
             gameData.enemy.hp.current = 0;
     
@@ -464,6 +465,7 @@ function defend(that) {
         enemyAttack = 0
         // Generate random int for index of attacks (0-2)
         randInt = Math.floor(Math.random()*3);
+        console.log("first rand int is : "+randInt)
         // To adjust the difficult of this game, I am making it harder for the enemy to use their best attack which is an index of 2. If the first randInt is a 2 then reassign it again
         if (randInt === 2) {
             randInt = Math.floor(Math.random()*3);
@@ -513,14 +515,10 @@ function defend(that) {
             gameData.hero.hp.current = 0
             $("#hpUpdate").text(gameData.hero.hp.current+"/"+gameData.hero.hp.total);
             //Ya boy is dead
-            clearModal();
-            $('.modal-in header').append('<h1>Your Hero has died</h1><span class="close">x</span>');
-            $('.modal-in section').append('<p>You lose, good day!');
-            $('.modal-out').slideDown('400');
-            modalControls()
+            showModal("hero");
     
-            //Set hp to 0 if it was in the negatives
-            gameData.hero.hp.current = 0;
+            // //Set hp to 0 if it was in the negatives
+            // gameData.hero.hp.current = 0;
             
             //Play again
             setTimeout(function(){
@@ -535,27 +533,33 @@ function defend(that) {
     }
 }
 
-//Modal controls
-function modalControls(){
-    $('.modal-out').click(function(){
-      $(this).slideUp('400');
-    });
-    $('.modal-in .close').click(function(e){
-      $('.modal-out').slideUp('400');
-    });
-  
-    $('.modal-in').click(function(e){
-      e.stopPropagation();
-      e.preventDefault();
-    });
-}
-
-//Clear Modal
-function clearModal(){
-    $('.modal-in header').empty();
-    $('.modal-in section').empty();
-    $('.modal-in footer').empty();
-    //setHP();
+function showModal(whoDied) {
+    //Show Modal
+    $("#modal").show();
+    //Clear Modal
+    $(".modal-title").empty();
+    $("#modalBody").empty();
+    //figure out who died to display an appropriate message
+    if (whoDied === "enemy") {
+        if (enemiesFainted === 3) {
+            $(".modal-title").append("Congratulations Pokemon Master")
+            $("#modalBody").append("I want to be the very best, Like no one ever was. To catch them is my real test, To train them is my cause!")
+        }
+        else {
+            $(".modal-title").append("Congratulations! You're Opponent Fainted...")
+            $("#modalBody").append("Only those who can defeat all 3 of their opponents are true Pokemon Masters. Dare you continue?")
+        }   
+    }
+    else if (whoDied === "hero") {
+        $(".modal-title").append("Oh No! You're Pokemon has Fainted...")
+        $("#modalBody").append("Nurse Joy and Officer Jenny are not impressed, please click the reset button and show them you can do better...")
+    }
+    $(".close").click(function(){
+        $("#modal").hide();
+    })
+    $("#closeModal").click(function(){
+        $("#modal").hide();
+    })
 }
 
 //Let the scrap begin, function to initiate fight
@@ -576,8 +580,7 @@ function attackList() {
                 //Pass attack object to function
                 attackEnemy($(this));
             }
-        }
-        
+        }        
     });
 }
 
