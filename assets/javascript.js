@@ -546,12 +546,12 @@ function showModal(whoDied) {
             $("#modalBody").append("I want to be the very best, Like no one ever was. To catch them is my real test, To train them is my cause!")
         }
         else {
-            $(".modal-title").append("Congratulations! You're Opponent Fainted...")
+            $(".modal-title").append("Congratulations! Your Opponent Fainted...")
             $("#modalBody").append("Only those who can defeat all 3 of their opponents are true Pokemon Masters. Dare you continue?")
         }   
     }
     else if (whoDied === "hero") {
-        $(".modal-title").append("Oh No! You're Pokemon has Fainted...")
+        $(".modal-title").append("Oh No! Your Pokemon has Fainted...")
         $("#modalBody").append("Nurse Joy and Officer Jenny are not impressed, please click the reset button and show them you can do better...")
     }
     $(".close").click(function(){
