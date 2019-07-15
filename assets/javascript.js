@@ -55,10 +55,10 @@ var characters = [
         },
         {
             name: "VoltTackle",
-            hp: attackPower(130, 400),
+            hp: attackPower(130, 500),
             pp: {
-                available: 3,
-                total: 3
+                available: 6,
+                total: 6
             }
         }]
     },
